@@ -13,7 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Login to ACR
       - name: Login to ACR
         uses: docker/login-action@v2
         with:
@@ -21,28 +20,19 @@ jobs:
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
-      # Build Docker image
-      - name: Build image
-        run: docker build -t ewalletapp.azurecr.io/wallet-service:latest .
+      - name: Build and push image
+        run: |
+          docker build -t ewalletapp.azurecr.io/wallet-service:latest .
+          docker push ewalletapp.azurecr.io/wallet-service:latest
 
-      # Push Docker image
-      - name: Push image
-        run: docker push ewalletapp.azurecr.io/wallet-service:latest
-
-      # Login to Azure
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # Deploy to Container Apps
       - name: Deploy to Azure Container Apps
-        uses: azure/container-apps-deploy-action@v1
-        with:
-          appName: wallet-service-app
-          resourceGroup: E-WalletApp
-          imageToDeploy: ewalletapp.azurecr.io/wallet-service:latest
-
-          registryUrl: ewalletapp.azurecr.io
-          registryUsername: ${{ secrets.ACR_USERNAME }}
-          registryPassword: ${{ secrets.ACR_PASSWORD }}
+        run: |
+          az containerapp update \
+            --name wallet-service-app \
+            --resource-group E-WalletApp \
+            --image ewalletapp.azurecr.io/wallet-service:latest
