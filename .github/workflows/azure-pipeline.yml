@@ -35,4 +35,5 @@ jobs:
           az containerapp update \
             --name wallet-service-app \
             --resource-group E-WalletApp \
-            --image ewalletapp.azurecr.io/wallet-service:latest
+            --image ewalletapp.azurecr.io/wallet-service:latest \
+            --target-port 8080
