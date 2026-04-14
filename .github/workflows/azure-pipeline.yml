@@ -22,8 +22,10 @@ jobs:
 
       - name: Build and push image
         run: |
-          docker build -t ewalletapp.azurecr.io/wallet-service:latest .
-          docker push ewalletapp.azurecr.io/wallet-service:latest
+                docker build -t ewalletapp.azurecr.io/wallet-service:latest \
+                     -t ewalletapp.azurecr.io/wallet-service:${{ github.sha }} .
+                docker push ewalletapp.azurecr.io/wallet-service:latest
+                docker push ewalletapp.azurecr.io/wallet-service:${{ github.sha }}
 
       - name: Azure Login
         uses: azure/login@v1
@@ -32,7 +34,7 @@ jobs:
 
       - name: Update image
         run: |
-                az containerapp update \
-                  --name wallet-service-app \
-                  --resource-group E-WalletApp \
-                  --image ewalletapp.azurecr.io/wallet-service:latest
+            az containerapp update \
+              --name wallet-service-app \
+              --resource-group E-WalletApp \
+              --image ewalletapp.azurecr.io/wallet-service:${{ github.sha }}
