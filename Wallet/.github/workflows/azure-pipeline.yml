@@ -3,7 +3,7 @@ name: Build and Deploy to Azure
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build-and-deploy:
@@ -23,11 +23,11 @@ jobs:
 
       # Build Docker image
       - name: Build image
-        run: docker build -t ewalletapp.azurecr.io/user-service:latest ./UserApplication
+        run: docker build -t ewalletapp.azurecr.io/wallet-service:latest .
 
       # Push Docker image
       - name: Push image
-        run: docker push ewalletapp.azurecr.io/user-service:latest
+        run: docker push ewalletapp.azurecr.io/wallet-service:latest
 
       # Login to Azure
       - name: Azure Login
@@ -39,6 +39,10 @@ jobs:
       - name: Deploy to Azure Container Apps
         uses: azure/container-apps-deploy-action@v1
         with:
-          appName: user-service-app
+          appName: wallet-service-app
           resourceGroup: E-WalletApp
-          imageToDeploy: ewalletapp.azurecr.io/user-service:latest
+          imageToDeploy: ewalletapp.azurecr.io/wallet-service:latest
+
+          registryUrl: ewalletapp.azurecr.io
+          registryUsername: ${{ secrets.ACR_USERNAME }}
+          registryPassword: ${{ secrets.ACR_PASSWORD }}
