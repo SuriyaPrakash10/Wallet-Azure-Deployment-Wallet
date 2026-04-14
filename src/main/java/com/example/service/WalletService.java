@@ -30,5 +30,4 @@ public class WalletService {
         String log = "Wallet created: " + walletId + " at " + new Date();
         blobStorageService.uploadLog("wallet-" + walletId + ".txt", log);
     }
-
 }
