@@ -6,7 +6,7 @@ WORKDIR /app
 COPY . .
 
 # Build just the Wallet module (note: case-sensitive!)
-RUN mvn clean package -DskipTests -pl Wallet -am
+RUN mvn clean package -DskipTests
 
 # Step 2: Run the app
 FROM eclipse-temurin:17-jdk-alpine
