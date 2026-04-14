@@ -28,12 +28,18 @@ jobs:
       - name: Azure Login
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy to Azure Container Apps
+      - name: Update image
         run: |
-          az containerapp update \
-            --name wallet-service-app \
-            --resource-group E-WalletApp \
-            --image ewalletapp.azurecr.io/wallet-service:latest \
-            --target-port 8080
+                az containerapp update \
+                  --name wallet-service-app \
+                  --resource-group E-WalletApp \
+                  --image ewalletapp.azurecr.io/wallet-service:latest
+
+      - name: Update port
+        run: |
+                az containerapp ingress update \
+                  --name wallet-service-app \
+                  --resource-group E-WalletApp \
+                  --target-port 8080
