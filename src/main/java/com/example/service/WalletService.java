@@ -9,11 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.UUID;
 
 @Service
 public class WalletService {
     @Autowired private WalletRepository repository;
+
+    @Autowired
+    private BlobStorageService blobStorageService;
 
     @KafkaListener(topics = {"user_created"}, groupId = "suriya")
     public void createWallet(String input) throws ParseException {
@@ -22,6 +26,9 @@ public class WalletService {
         String walletId = UUID.randomUUID().toString();
         WalletEntity wallet = WalletEntity.builder().walletId(walletId).currency("INR").balance(100L).build();
         repository.save(wallet);
+
+        String log = "Wallet created: " + walletId + " at " + new Date();
+        blobStorageService.uploadLog("wallet-" + walletId + ".txt", log);
     }
 
 }
